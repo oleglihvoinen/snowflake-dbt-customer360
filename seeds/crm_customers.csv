@@ -1,0 +1,4 @@
+customer_id,customer_name,email,phone,country_code,updated_at
+C001,Acme Oy,INFO@ACME.FI,+358 40 111 2222,fi,2026-09-20 10:00:00
+C002,Nordic Parts,nina@nordicparts.fi,040-333-4444,FI,2026-09-21 11:00:00
+C003,Baltic Trade,contact@baltictrade.lv,+371 2000 3000,lv,2026-09-22 12:00:00
