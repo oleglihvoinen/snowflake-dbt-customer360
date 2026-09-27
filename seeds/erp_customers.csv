@@ -1,0 +1,4 @@
+account_id,account_name,contact_email,contact_phone,country,modified_at
+E900,ACME OY,info@acme.fi,+358401112222,FI,2026-09-18 09:00:00
+E901,Nordic Parts Ltd,nina@nordicparts.fi,+358403334444,FI,2026-09-19 09:30:00
+E902,New Industrial Customer,new@example.com,+358505556666,FI,2026-09-23 14:00:00
