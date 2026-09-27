@@ -1,0 +1,16 @@
+version: 2
+sources:
+  - name: raw
+    database: CUSTOMER360
+    schema: RAW
+    tables:
+      - name: crm_customers
+      - name: erp_customers
+models:
+  - name: dim_customer
+    description: Golden customer dimension produced from standardized cross-system identities.
+    columns:
+      - name: customer_key
+        tests: [unique, not_null]
+      - name: email
+        tests: [not_null]
