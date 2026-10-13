@@ -1,0 +1,22 @@
+version: 1
+entity: customer
+match_policy:
+  auto_match_threshold: 0.65
+  stewardship_review_threshold: 0.50
+  strong_identifiers:
+    - email
+    - phone
+  conflict_rule: conflicting email and phone prevent automatic merge
+
+survivorship:
+  source_priority:
+    CRM: 100
+    ERP: 80
+    OTHER: 10
+  tie_breaker: latest updated_at
+  provenance: field-level
+
+outputs:
+  - golden_customer
+  - match_evidence
+  - stewardship_exception_queue
