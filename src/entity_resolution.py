@@ -72,10 +72,10 @@ def compare(left: CustomerRecord, right: CustomerRecord) -> MatchEvidence:
         score += 0.05
         reasons.append("same_country")
     if name_similarity >= 0.93:
-        score += 0.30
+        score += 0.48
         reasons.append("strong_name_similarity")
     elif name_similarity >= 0.82:
-        score += 0.18
+        score += 0.30
         reasons.append("moderate_name_similarity")
 
     # Conflicting strong identifiers must not be silently merged.
