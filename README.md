@@ -1,73 +1,56 @@
 # Snowflake + dbt Customer 360
 
-Portfolio/reference implementation of a governed Customer 360 pipeline using Snowflake and dbt.
-
-## Business problem
-
-Customer records arrive from CRM and ERP with different identifiers, formats and quality. The pipeline standardizes source data, resolves deterministic cross-system identities and publishes an analytics-ready golden customer model.
+A governed **Customer 360 / MDM data product** combining Snowflake/dbt transformations with explainable entity resolution, field-level survivorship, stewardship exceptions and API delivery.
 
 ## Architecture
 
 ```text
 CRM ─┐
-     ├─> Snowflake RAW -> dbt staging -> identity resolution -> survivorship -> DIM_CUSTOMER
-ERP ─┘                                                       |
-                                                              +-> snapshot/history
+     ├─> Snowflake RAW -> dbt staging -> identity candidates
+ERP ─┘                                     |
+                                            +-> deterministic/fuzzy evidence
+                                            +-> conflict detection
+                                            +-> stewardship queue
+                                            |
+                                            v
+                                   field-level survivorship
+                                            |
+                                            v
+                                      DIM_CUSTOMER
+                                            |
+                                  BI / APIs / governed AI
 ```
 
-See [docs/architecture.md](docs/architecture.md) for layer responsibilities and production extensions.
+## Implemented engineering depth
 
-## Engineering highlights
+- source-specific staging and normalization
+- dbt source declarations, tests, snapshots and golden customer mart
+- explainable cross-system entity-resolution engine
+- exact-email / exact-phone and name-similarity evidence
+- explicit auto-match, review and reject decisions
+- protection against merging records with conflicting strong identifiers
+- transitive entity clustering
+- field-level survivorship rather than whole-record winner-takes-all
+- field provenance showing which source supplied each surviving attribute
+- stewardship exception queue for ambiguous candidates
+- YAML MDM policy defining thresholds and source priority
+- automated Python tests for matching, conflict, survivorship and clustering
+- CI validation for entity-resolution behavior
+- FastAPI data-product boundary and Docker packaging
 
-- Snowflake database/schema bootstrap
-- dbt source declarations and model tests
-- CRM and ERP staging models
-- Email, phone and country standardization
-- Deterministic identity resolution
-- Explicit source-priority survivorship
-- Golden customer dimensional model
-- Singular dbt business-rule test
-- dbt snapshot for customer history
-- Reusable normalization macro
-- Environment-variable based profile example
-- Synthetic sample data and documented expected result
+## MDM policy
 
-## Repository structure
+`config/mdm_policy.yml` makes the matching and survivorship policy explicit instead of hiding it in application code. Ambiguous matches can be routed to stewardship rather than silently merged.
 
-```text
-.
-├── dbt_project.yml
-├── profiles.yml.example
-├── snowflake/setup.sql
-├── seeds/
-├── macros/
-├── models/
-│   ├── sources.yml
-│   ├── staging/
-│   ├── intermediate/
-│   └── marts/
-├── snapshots/
-├── tests/
-└── docs/
-```
+The public data and rules are synthetic and contain no employer/customer data.
 
-## Running the project
-
-1. Create the Snowflake database/schemas using `snowflake/setup.sql`.
-2. Load the supplied synthetic CSV records into `CUSTOMER360.RAW.CRM_CUSTOMERS` and `CUSTOMER360.RAW.ERP_CUSTOMERS`. The files under `seeds/` are intentionally included as transparent sample source data; the models themselves read the RAW source tables.
-3. Copy `profiles.yml.example` to your dbt profiles directory and provide the Snowflake environment variables.
-4. Run:
+## Run entity-resolution tests
 
 ```bash
-dbt debug
-dbt build
-dbt snapshot
+python -m pip install pytest
+pytest -q tests_python
 ```
 
-See [docs/expected-output.md](docs/expected-output.md) for the expected golden-record behavior.
+For the dbt/Snowflake portion, configure `profiles.yml` and run `dbt build` / `dbt snapshot`.
 
-## Production evolution
-
-A real enterprise implementation would normally add fuzzy/probabilistic matching where required, reference-data validation, SCD2 strategy aligned to business history requirements, stewardship/exception workflows, source freshness SLAs, observability, role-based access and auditable manual overrides.
-
-This public project uses generic synthetic structures and contains no employer or customer data.
+**Technologies:** Snowflake · dbt · SQL · Python · MDM · entity resolution · survivorship · stewardship · data quality · FastAPI · Docker · CI/CD
